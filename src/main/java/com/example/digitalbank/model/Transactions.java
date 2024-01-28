@@ -2,8 +2,6 @@ package com.example.digitalbank.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -28,6 +26,8 @@ public class Transactions {
 
     @DecimalMin(value = "0.01", message = "Amount must be greater than zero")
     private BigDecimal amount;
+
+    private Integer installmentNumber;
 
     private String description;
 

@@ -82,7 +82,7 @@ public class User implements UserDetails {
     }
 
     public boolean hasSufficientCreditLimit(BigDecimal transactionAmount) {
-        return balance != null && balance.compareTo(transactionAmount) >= 0;
+        return creditLimit != null && creditLimit.compareTo(transactionAmount) >= 0;
     }
 
     public void subtractBalance(BigDecimal amount){

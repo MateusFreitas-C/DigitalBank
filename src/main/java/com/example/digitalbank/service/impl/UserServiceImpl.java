@@ -38,4 +38,9 @@ public class UserServiceImpl implements UserService {
     public User getByCpf(String cpf) {
         return userRepository.findByCpf(cpf).orElseThrow(()-> new UsernameNotFoundException("User not found"));
     }
+
+    @Override
+    public User getById(Integer id) {
+        return userRepository.findById(id).orElseThrow(()-> new UsernameNotFoundException("User not found"));
+    }
 }

@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 public interface TransactionsService {
     Transactions debitTransaction(String destination, BigDecimal amount, String description);
 
-    Transactions creditTransaction(String destination, BigDecimal amount, String description);
+    Transactions creditTransaction(String destination, BigDecimal amount, String description, Integer installmentNumber);
 
     void saveTransaction(TransactionRequest transaction);
 

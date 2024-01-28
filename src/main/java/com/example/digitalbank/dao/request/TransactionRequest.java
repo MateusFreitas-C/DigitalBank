@@ -22,4 +22,6 @@ public class TransactionRequest {
 
     @NotBlank(message = "Transaction type may not be empty")
     String type;
+
+    Integer installmentNumber;
 }

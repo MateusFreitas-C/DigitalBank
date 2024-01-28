@@ -7,6 +7,7 @@ import lombok.Setter;
 import java.math.BigDecimal;
 
 @Table(name = "invoices")
+@Entity
 @Getter @Setter
 public class Invoice {
     @Id
@@ -28,6 +29,10 @@ public class Invoice {
         this.user = user;
         this.invoiceNumber = invoiceNumber;
         paid = false;
+    }
+
+    public Invoice() {
+
     }
 
     public void payInvoice(BigDecimal amount){

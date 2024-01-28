@@ -6,6 +6,7 @@ import com.example.digitalbank.model.TransactionType;
 import com.example.digitalbank.model.Transactions;
 import com.example.digitalbank.model.User;
 import com.example.digitalbank.repository.TransactionRepository;
+import com.example.digitalbank.service.InvoiceService;
 import com.example.digitalbank.service.TransactionsService;
 import com.example.digitalbank.service.UserService;
 import lombok.AllArgsConstructor;
@@ -21,6 +22,9 @@ public class TransactionsServiceImpl implements TransactionsService {
     private final UserService userService;
 
     private final TransactionRepository transactionRepository;
+
+    private final InvoiceService invoiceService;
+
     @Override
     public Transactions debitTransaction(String destination, BigDecimal amount, String description) {
         User source = getTransactionSource();
@@ -34,11 +38,11 @@ public class TransactionsServiceImpl implements TransactionsService {
         addBalanceAmount(userDestination, amount);
 
         return Transactions.builder().source(source).destination(userDestination)
-                .amount(amount).description(description).type(TransactionType.DEBIT).timestamp(LocalDateTime.now()).build();
+                .amount(amount).installmentNumber(0).description(description).type(TransactionType.DEBIT).timestamp(LocalDateTime.now()).build();
     }
 
     @Override
-    public Transactions creditTransaction(String destination, BigDecimal amount, String description) {
+    public Transactions creditTransaction(String destination, BigDecimal amount, String description, Integer installmentNumber) {
         User source = getTransactionSource();
         User userDestination = getTransactionDestination(destination);
 
@@ -48,13 +52,14 @@ public class TransactionsServiceImpl implements TransactionsService {
 
         //source changes
         subtractCreditLimitAmount(source, amount);
-        //TODO criar invoice service e repository e obter faturas nao pagas por usuario
+        invoiceService.createInvoice(amount, installmentNumber, source.getId());
 
 
         addBalanceAmount(userDestination, amount);
 
         return Transactions.builder().source(source).destination(userDestination)
-                .amount(amount).description(description).type(TransactionType.CREDIT).timestamp(LocalDateTime.now()).build();
+                .amount(amount).installmentNumber(installmentNumber).description(description)
+                .type(TransactionType.CREDIT).timestamp(LocalDateTime.now()).build();
     }
 
     @Override
@@ -67,7 +72,7 @@ public class TransactionsServiceImpl implements TransactionsService {
 
         }else if (type == TransactionType.CREDIT){
             transactionRepository.save(creditTransaction(transaction.getDestination(), transaction.getAmount(),
-                    transaction.getDescription()));
+                    transaction.getDescription(), transaction.getInstallmentNumber()));
 
         }else{
             throw new IllegalArgumentException("Transaction type not available");

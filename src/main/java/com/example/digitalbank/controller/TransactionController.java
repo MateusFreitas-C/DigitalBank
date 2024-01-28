@@ -1,7 +1,6 @@
 package com.example.digitalbank.controller;
 
 import com.example.digitalbank.dao.request.TransactionRequest;
-import com.example.digitalbank.model.User;
 import com.example.digitalbank.service.TransactionsService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -19,7 +18,7 @@ public class TransactionController {
     private final TransactionsService transactionsService;
 
     @PostMapping
-    public ResponseEntity<String> getSource(@RequestBody @Valid TransactionRequest request){
+    public ResponseEntity<String> saveTransaction(@RequestBody @Valid TransactionRequest request){
         transactionsService.saveTransaction(request);
 
         return ResponseEntity.status(HttpStatus.OK).body("Transaction Succedeed");

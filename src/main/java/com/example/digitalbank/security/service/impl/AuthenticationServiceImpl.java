@@ -1,22 +1,15 @@
 package com.example.digitalbank.security.service.impl;
 
-import com.example.digitalbank.controller.AuthenticationController;
 import com.example.digitalbank.dao.request.SignUpRequest;
 import com.example.digitalbank.dao.request.SigninRequest;
 import com.example.digitalbank.dao.response.JwtAuthenticationResponse;
 import com.example.digitalbank.model.Role;
 import com.example.digitalbank.model.User;
-import com.example.digitalbank.repository.UserRepository;
 import com.example.digitalbank.security.service.AuthenticationService;
 import com.example.digitalbank.security.service.JwtService;
 import com.example.digitalbank.service.UserService;
 import lombok.AllArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
