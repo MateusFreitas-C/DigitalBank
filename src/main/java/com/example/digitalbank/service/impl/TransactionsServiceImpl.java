@@ -3,6 +3,7 @@ package com.example.digitalbank.service.impl;
 import com.example.digitalbank.dao.request.TransactionRequest;
 import com.example.digitalbank.exception.InsufficientBalanceException;
 import com.example.digitalbank.exception.SelfTransactionException;
+import com.example.digitalbank.model.Invoice;
 import com.example.digitalbank.model.TransactionType;
 import com.example.digitalbank.model.Transactions;
 import com.example.digitalbank.model.User;
@@ -11,6 +12,8 @@ import com.example.digitalbank.service.InvoiceService;
 import com.example.digitalbank.service.TransactionsService;
 import com.example.digitalbank.service.UserService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -134,6 +137,30 @@ public class TransactionsServiceImpl implements TransactionsService {
         if(source.getCpf().equals(destination)){
             throw new SelfTransactionException();
         }
+    }
+
+    @Override
+    public void payActualInvoice(User user) {
+        Invoice invoice = invoiceService.getActualInvoice(user.getId());
+
+        if(!isBalanceEnough(user, invoice.getAmount())) {
+            throw new InsufficientBalanceException("balance");
+        }
+
+        invoice.setPaid(true);
+
+        user.addCreditLimit(invoice.getAmount());
+        subtractBalanceAmount(user, invoice.getAmount());
+
+        userService.saveUser(user);
+
+        transactionRepository.save(Transactions.builder().source(user).amount(invoice.getAmount()).installmentNumber(0)
+                .description("Invoice Payment").type(TransactionType.DEBIT).timestamp(LocalDateTime.now()).build());
+    }
+
+    @Override
+    public Page<Transactions> getTransactionsPageableByUserId(Integer userId, Integer pageSize, Integer pageNumber) {
+        return transactionRepository.findAllBySourceId(userId, PageRequest.of(pageNumber, pageSize));
     }
 
 }

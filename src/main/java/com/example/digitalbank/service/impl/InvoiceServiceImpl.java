@@ -1,6 +1,8 @@
 package com.example.digitalbank.service.impl;
 
+import com.example.digitalbank.exception.InvoiceNotFoundException;
 import com.example.digitalbank.model.Invoice;
+
 import com.example.digitalbank.repository.InvoiceRepository;
 import com.example.digitalbank.service.InvoiceService;
 import com.example.digitalbank.service.UserService;
@@ -65,4 +67,23 @@ public class InvoiceServiceImpl implements InvoiceService {
     public List<Invoice> findUserNonPaidInvoices(Integer userId) {
         return invoiceRepository.findByPaidAndUserId(false, userId);
     }
+
+    @Override
+    public void payActualInvoice(Invoice invoice) {
+        invoice.setPaid(true);
+        invoiceRepository.save(invoice);
+    }
+
+    @Override
+    public Invoice getActualInvoice(Integer userId) {
+        List<Invoice> invoices = invoiceRepository.findByPaidAndUserId(false, userId);
+
+        if(invoices.isEmpty()){
+            throw new InvoiceNotFoundException("There is no invoice to be paid");
+        }
+
+        return invoices.get(0);
+    }
+
+
 }

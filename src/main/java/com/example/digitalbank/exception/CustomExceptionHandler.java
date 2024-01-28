@@ -40,4 +40,10 @@ public class CustomExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ex.getMessage());
     }
+
+    @ExceptionHandler(InvoiceNotFoundException.class)
+    public ResponseEntity<String> InvoiceNotFound(InvoiceNotFoundException ex) {
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    }
 }

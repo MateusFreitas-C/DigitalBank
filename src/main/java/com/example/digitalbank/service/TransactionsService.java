@@ -4,6 +4,7 @@ import com.example.digitalbank.dao.request.TransactionRequest;
 import com.example.digitalbank.model.TransactionType;
 import com.example.digitalbank.model.Transactions;
 import com.example.digitalbank.model.User;
+import org.springframework.data.domain.Page;
 
 import java.math.BigDecimal;
 
@@ -31,4 +32,8 @@ public interface TransactionsService {
     void subtractCreditLimitAmount(User user, BigDecimal amount);
 
     void validSourceAndDestination(User source, String destination);
+
+    void payActualInvoice(User user);
+
+    Page<Transactions> getTransactionsPageableByUserId(Integer userId, Integer pageSize, Integer pageNumber);
 }

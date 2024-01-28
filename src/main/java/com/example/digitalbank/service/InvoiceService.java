@@ -13,4 +13,8 @@ public interface InvoiceService {
     void createInvoice(BigDecimal amount, Integer installmentNumber, Integer userId);
 
     List<Invoice> findUserNonPaidInvoices(Integer userId);
+
+    void payActualInvoice(Invoice invoice);
+
+    Invoice getActualInvoice(Integer userId);
 }
