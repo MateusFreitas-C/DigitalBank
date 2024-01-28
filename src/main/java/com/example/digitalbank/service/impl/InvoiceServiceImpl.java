@@ -3,6 +3,7 @@ package com.example.digitalbank.service.impl;
 import com.example.digitalbank.exception.InvoiceNotFoundException;
 import com.example.digitalbank.model.Invoice;
 
+import com.example.digitalbank.model.Transactions;
 import com.example.digitalbank.repository.InvoiceRepository;
 import com.example.digitalbank.service.InvoiceService;
 import com.example.digitalbank.service.UserService;
@@ -28,37 +29,37 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
-    public void createInvoice(BigDecimal amount, Integer installmentNumber, Integer userId) {
+    public void createInvoice(BigDecimal amount, Integer installmentNumber, Integer userId, Transactions transaction) {
         List<Invoice> invoices = findUserNonPaidInvoices(userId);
         BigDecimal installmentAmount = calculateInstallmentAmount(amount, installmentNumber);
 
         if (invoices.isEmpty()) {
-            createInvoices(installmentAmount, installmentNumber, userId);
+            createInvoices(installmentAmount, installmentNumber, userId, transaction);
         } else if (invoices.size() >= installmentNumber) {
-            updateExistingInvoices(invoices, installmentAmount, installmentNumber);
+            updateExistingInvoices(invoices, installmentAmount, installmentNumber, transaction);
         } else {
-            updateExistingInvoices(invoices, installmentAmount, invoices.size());
-            createAdditionalInvoices(invoices.size() + 1, installmentNumber, installmentAmount, userId);
+            updateExistingInvoices(invoices, installmentAmount, invoices.size(), transaction);
+            createAdditionalInvoices(invoices.size() + 1, installmentNumber, installmentAmount, userId, transaction);
         }
     }
 
-    private void createInvoices(BigDecimal installmentAmount, Integer installmentNumber, Integer userId) {
+    private void createInvoices(BigDecimal installmentAmount, Integer installmentNumber, Integer userId, Transactions transaction) {
         for (int i = 1; i <= installmentNumber; i++) {
-            Invoice invoice = new Invoice(installmentAmount, userService.getById(userId), i);
+            Invoice invoice = new Invoice(installmentAmount, userService.getById(userId), i, transaction);
             invoiceRepository.save(invoice);
         }
     }
 
-    private void updateExistingInvoices(List<Invoice> invoices, BigDecimal installmentAmount, Integer installmentNumber) {
+    private void updateExistingInvoices(List<Invoice> invoices, BigDecimal installmentAmount, Integer installmentNumber, Transactions transactions) {
         for (Invoice invoice : invoices.subList(0, installmentNumber)) {
             invoice.addAmountToInvoice(installmentAmount);
             invoiceRepository.save(invoice);
         }
     }
 
-    private void createAdditionalInvoices(int startInvoiceNumber, int endInvoiceNumber, BigDecimal installmentAmount, Integer userId) {
+    private void createAdditionalInvoices(int startInvoiceNumber, int endInvoiceNumber, BigDecimal installmentAmount, Integer userId, Transactions transaction) {
         for (int i = startInvoiceNumber; i <= endInvoiceNumber; i++) {
-            Invoice invoice = new Invoice(installmentAmount, userService.getById(userId), i);
+            Invoice invoice = new Invoice(installmentAmount, userService.getById(userId), i, transaction);
             invoiceRepository.save(invoice);
         }
     }

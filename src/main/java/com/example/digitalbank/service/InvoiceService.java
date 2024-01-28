@@ -1,6 +1,7 @@
 package com.example.digitalbank.service;
 
 import com.example.digitalbank.model.Invoice;
+import com.example.digitalbank.model.Transactions;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -10,7 +11,7 @@ public interface InvoiceService {
 
     BigDecimal calculateInstallmentAmount(BigDecimal amount, Integer installmentNumber);
 
-    void createInvoice(BigDecimal amount, Integer installmentNumber, Integer userId);
+    void createInvoice(BigDecimal amount, Integer installmentNumber, Integer userId, Transactions transaction);
 
     List<Invoice> findUserNonPaidInvoices(Integer userId);
 

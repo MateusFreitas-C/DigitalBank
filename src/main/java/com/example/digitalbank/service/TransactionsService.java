@@ -9,9 +9,9 @@ import org.springframework.data.domain.Page;
 import java.math.BigDecimal;
 
 public interface TransactionsService {
-    Transactions debitTransaction(String destination, BigDecimal amount, String description);
+    Transactions debitTransaction(String destination, BigDecimal amount, String description, User source);
 
-    Transactions creditTransaction(String destination, BigDecimal amount, String description, Integer installmentNumber);
+    Transactions creditTransaction(String destination, BigDecimal amount, String description, Integer installmentNumber, User source);
 
     void saveTransaction(TransactionRequest transaction);
 

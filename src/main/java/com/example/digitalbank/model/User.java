@@ -1,5 +1,6 @@
 package com.example.digitalbank.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
@@ -33,6 +34,7 @@ public class User implements UserDetails {
 
     @NotBlank(message = "Password may not be empty")
     @Size(min = 6, message = "The password must be at least 6 characters")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
     private BigDecimal balance;

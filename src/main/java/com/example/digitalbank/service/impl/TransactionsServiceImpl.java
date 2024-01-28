@@ -30,11 +30,8 @@ public class TransactionsServiceImpl implements TransactionsService {
     private final InvoiceService invoiceService;
 
     @Override
-    public Transactions debitTransaction(String destination, BigDecimal amount, String description) {
-        User source = getTransactionSource();
+    public Transactions debitTransaction(String destination, BigDecimal amount, String description, User source) {
         User userDestination = getTransactionDestination(destination);
-
-        validSourceAndDestination(source, destination);
 
         if(!isBalanceEnough(source, amount)) {
             throw new InsufficientBalanceException("balance");
@@ -48,11 +45,8 @@ public class TransactionsServiceImpl implements TransactionsService {
     }
 
     @Override
-    public Transactions creditTransaction(String destination, BigDecimal amount, String description, Integer installmentNumber) {
-        User source = getTransactionSource();
+    public Transactions creditTransaction(String destination, BigDecimal amount, String description, Integer installmentNumber, User source) {
         User userDestination = getTransactionDestination(destination);
-
-        validSourceAndDestination(source, destination);
 
         if(!isCreditLimitEnough(source, amount)) {
             throw new InsufficientBalanceException("credit limit");
@@ -60,8 +54,6 @@ public class TransactionsServiceImpl implements TransactionsService {
 
         //source changes
         subtractCreditLimitAmount(source, amount);
-        invoiceService.createInvoice(amount, installmentNumber, source.getId());
-
 
         addBalanceAmount(userDestination, amount);
 
@@ -74,13 +66,18 @@ public class TransactionsServiceImpl implements TransactionsService {
     public void saveTransaction(TransactionRequest transaction) {
         TransactionType type = verifyType(transaction.getType());
 
+        User source = getTransactionSource();
+        validSourceAndDestination(source, transaction.getDestination());
+
         if(type == TransactionType.DEBIT){
             transactionRepository.save(debitTransaction(transaction.getDestination(), transaction.getAmount(),
-                    transaction.getDescription()));
+                    transaction.getDescription(), source));
 
         }else if (type == TransactionType.CREDIT){
-            transactionRepository.save(creditTransaction(transaction.getDestination(), transaction.getAmount(),
-                    transaction.getDescription(), transaction.getInstallmentNumber()));
+            Transactions transactions = transactionRepository.save(creditTransaction(transaction.getDestination(), transaction.getAmount(),
+                    transaction.getDescription(), transaction.getInstallmentNumber(),source));
+
+            invoiceService.createInvoice(transaction.getAmount(), transaction.getInstallmentNumber(), source.getId(), transactions);
 
         }else{
             throw new IllegalArgumentException("Transaction type not available");
