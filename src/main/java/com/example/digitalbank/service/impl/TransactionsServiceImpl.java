@@ -147,7 +147,7 @@ public class TransactionsServiceImpl implements TransactionsService {
             throw new InsufficientBalanceException("balance");
         }
 
-        invoice.setPaid(true);
+        invoiceService.payActualInvoice(invoice);
 
         user.addCreditLimit(invoice.getAmount());
         subtractBalanceAmount(user, invoice.getAmount());
