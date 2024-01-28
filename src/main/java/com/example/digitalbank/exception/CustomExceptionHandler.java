@@ -34,4 +34,10 @@ public class CustomExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getFieldError().getDefaultMessage());
     }
+
+    @ExceptionHandler(SelfTransactionException.class)
+    public ResponseEntity<String> SelfTransactionHandler(SelfTransactionException ex) {
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ex.getMessage());
+    }
 }

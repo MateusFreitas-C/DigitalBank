@@ -29,4 +29,6 @@ public interface TransactionsService {
     void addBalanceAmount(User user, BigDecimal amount);
 
     void subtractCreditLimitAmount(User user, BigDecimal amount);
+
+    void validSourceAndDestination(User source, String destination);
 }

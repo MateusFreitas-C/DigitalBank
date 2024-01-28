@@ -2,6 +2,7 @@ package com.example.digitalbank.service.impl;
 
 import com.example.digitalbank.dao.request.TransactionRequest;
 import com.example.digitalbank.exception.InsufficientBalanceException;
+import com.example.digitalbank.exception.SelfTransactionException;
 import com.example.digitalbank.model.TransactionType;
 import com.example.digitalbank.model.Transactions;
 import com.example.digitalbank.model.User;
@@ -30,6 +31,8 @@ public class TransactionsServiceImpl implements TransactionsService {
         User source = getTransactionSource();
         User userDestination = getTransactionDestination(destination);
 
+        validSourceAndDestination(source, destination);
+
         if(!isBalanceEnough(source, amount)) {
             throw new InsufficientBalanceException("balance");
         }
@@ -45,6 +48,8 @@ public class TransactionsServiceImpl implements TransactionsService {
     public Transactions creditTransaction(String destination, BigDecimal amount, String description, Integer installmentNumber) {
         User source = getTransactionSource();
         User userDestination = getTransactionDestination(destination);
+
+        validSourceAndDestination(source, destination);
 
         if(!isCreditLimitEnough(source, amount)) {
             throw new InsufficientBalanceException("credit limit");
@@ -122,6 +127,13 @@ public class TransactionsServiceImpl implements TransactionsService {
     public void subtractCreditLimitAmount(User user, BigDecimal amount) {
         user.subtractCreditLimit(amount);
         userService.saveUser(user);
+    }
+
+    @Override
+    public void validSourceAndDestination(User source, String destination) {
+        if(source.getCpf().equals(destination)){
+            throw new SelfTransactionException();
+        }
     }
 
 }
