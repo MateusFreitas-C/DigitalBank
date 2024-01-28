@@ -11,20 +11,6 @@ Este projeto é uma API para um banco digital, desenvolvida utilizando Spring Bo
 
 ## Documentação
 
-# API do Digital Bank
-
-Bem-vindo à documentação da API do Digital Bank. Aqui você encontrará informações sobre os endpoints disponíveis, suas funcionalidades e como interagir com a API.
-
-## Documentação Swagger
-
-A API é documentada usando o Swagger, uma ferramenta que facilita a visualização e teste de endpoints diretamente do navegador.
-
-### Acessando a Documentação
-
-Você pode acessar a documentação da API através do Swagger-UI. Após iniciar a aplicação, acesse o seguinte URL no seu navegador:
-
-[Swagger-UI](http://localhost:8080/swagger-ui/)
-
 ### Endpoints Disponíveis
 
 #### 1. Autenticação
